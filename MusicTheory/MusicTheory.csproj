@@ -43,11 +43,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GuitarString.cs" />
     <Compile Include="Note.cs" />
+    <Compile Include="NoteMap.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scale.cs" />
+    <Compile Include="ScaleNames.cs" />
     <Compile Include="Step.cs" />
+    <Compile Include="Triad.cs" />
+    <Compile Include="Tuning.cs" />
+    <Compile Include="VirtualGuitarFretBoard.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

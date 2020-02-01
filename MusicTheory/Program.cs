@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MusicTheory
 {
@@ -10,9 +6,10 @@ namespace MusicTheory
     {
         static void Main(string[] args)
         {
-
-            var scale = new Scale("C");
-
+            var scale = new Scale("C", ScaleNames.Blues);
+            var vFb = new VirtualGuitarFretBoard(scale);
+            vFb.PrintFretBoard();
+            Console.ReadLine();
         }
     }
 }

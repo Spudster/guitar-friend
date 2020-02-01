@@ -1,93 +1,308 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MusicTheory
 {
     public class Scale
     {
         public string ScaleName { get; set; }
+        public ScaleNames ScaleNameEnum { get; set; }
         public string RootNote { get; set; }
         public List<Step> Formula { get; set; }
         public List<Note> ScaleNotes { get; set; }
-        private List<Note> MainNoteMap { get; set; }
-        private int _rootIndex = -1;
+        public List<List<Note>> TuningScales { get; set; }
+        private NoteMap MainNoteMap { get; set; }
 
-        public Scale(string rootNote)
+
+        public Scale(string rootNote, ScaleNames scaleName)
         {
-            MainNoteMap = new List<Note>();
+            MainNoteMap = new NoteMap();
+            MainNoteMap.GenerateMainNoteMap();
             Formula = new List<Step>();
             ScaleNotes = new List<Note>();
-
-            GenerateMainNoteMap();
+            TuningScales = new List<List<Note>>();
             RootNote = rootNote;
-            GenerateDefaultFormula();
+            ScaleNameEnum = scaleName;
+            ScaleName = scaleName.ToString();
+            GenerateDefaultFormulaFromList();
             RootNote = rootNote;
             GenerateScaleNotes();
+            GenerateScaleForEachScaleNote();
         }
 
         public Scale(List<Step> formula, string rootNote)
         {
-            MainNoteMap = new List<Note>();
+            MainNoteMap = new NoteMap();
+            MainNoteMap.GenerateMainNoteMap();
             ScaleNotes = new List<Note>();
+            TuningScales = new List<List<Note>>();
             Formula = formula;
-
-            GenerateMainNoteMap();
             RootNote = rootNote;
             GenerateDefaultFormula();
             RootNote = rootNote;
             GenerateScaleNotes();
+            GenerateScaleForEachScaleNote();
         }
 
         private void GenerateDefaultFormula()
         {
-            //ScaleName = "Major Scale";
-            //Formula.Add(new Step("w"));
-            //Formula.Add(new Step("w"));
-            //Formula.Add(new Step("h"));
-            //Formula.Add(new Step("w"));
-            //Formula.Add(new Step("w"));
-            //Formula.Add(new Step("w"));
-            //Formula.Add(new Step("h"));
+        }
 
-            ScaleName = "Blues Scale";
-            Formula.Add(new Step("wh"));
-            Formula.Add(new Step("w"));
-            Formula.Add(new Step("h"));
-            Formula.Add(new Step("h"));
-            Formula.Add(new Step("wh"));
-            Formula.Add(new Step("w"));
+        private void GenerateDefaultFormulaFromList()
+        {
+            switch (ScaleNameEnum)
+            {
+                case  ScaleNames.Major:
+                   
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("h"));
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("h"));
+                    break;
+                case ScaleNames.Blues:
+                   
+                    Formula.Add(new Step("wh"));
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("h"));
+                    Formula.Add(new Step("h"));
+                    Formula.Add(new Step("wh"));
+                    Formula.Add(new Step("w"));
+                    break;
+                case ScaleNames.NaturalMinor:
+                   
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("h"));
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("h"));
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("w"));
+                    break;
+                case ScaleNames.MinorPentatonic:
+                   
+                    Formula.Add(new Step("wh"));
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("wh"));
+                    Formula.Add(new Step("w"));
+                    break;
+                case ScaleNames.MajorPentatonic:
+                   
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("wh"));
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("wh"));
+                    break;
+                case ScaleNames.HarmonicMinor:
+                   
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("h"));
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("h"));
+                    Formula.Add(new Step("wh"));
+                    Formula.Add(new Step("h"));
+                    break;
+                case ScaleNames.MelodicMinor:
+                   
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("h"));
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("h"));
+                    break;
+                case ScaleNames.Ionian:
+                   
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("h"));
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("h"));
+                    break;
+                case ScaleNames.Dorian:
+                   
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("h"));
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("h"));
+                    Formula.Add(new Step("w"));
+                    break;
+                case ScaleNames.Phrygian:
+                   
+                    Formula.Add(new Step("h"));
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("h"));
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("w"));
+                    break;
+                case ScaleNames.Lydian:
+                   
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("h"));
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("h"));
+                    break;
+                case ScaleNames.Mixolydian:
+                   
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("h"));
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("h"));
+                    Formula.Add(new Step("w"));
+                    break;
+                case ScaleNames.Aeolian:
+                   
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("h"));
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("h"));
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("w"));
+                    break;
+                case ScaleNames.Locrian:
+                   
+                    Formula.Add(new Step("h"));
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("h"));
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("w"));
+                    break;
+                case ScaleNames.WholeTone:
+                   
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("w"));
+                    break;
+                case ScaleNames.WholeHalfDiminished:
+                   
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("h"));
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("h"));
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("h"));
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("h"));
+                    break;
+                case ScaleNames.HalfWholeDiminished:
+                   
+                    Formula.Add(new Step("h"));
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("h"));
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("h"));
+                    Formula.Add(new Step("w"));
+                    Formula.Add(new Step("h"));
+                    Formula.Add(new Step("w"));
+                    break;
+            }
         }
 
         private void GenerateScaleNotes()
         {
-            var rootNote = MainNoteMap.FirstOrDefault(_ => _.LetterName.Contains(RootNote));
+            var rootNote = MainNoteMap.MainNoteMap.FirstOrDefault(_ => _.LetterName.Contains(RootNote));
             if (rootNote == null) throw new Exception("Root Note Not Found");
-            _rootIndex = rootNote.PositionIndex - 1;
-            if (_rootIndex == -1) throw new Exception("Invalid Root Note");
-            ScaleNotes.Add(MainNoteMap[_rootIndex]);
+            var rootIndex = rootNote.PositionIndex - 1;
+            if (rootIndex == -1) throw new Exception("Invalid Root Note");
+            var rootNoteToAdd = new Note(MainNoteMap.MainNoteMap[rootIndex]) {ScalePosition = 1};
+            ScaleNotes.Add(rootNoteToAdd);
+            var startPositionForLoop = 2;
 
             for (var i = 0; i < Formula.Count; i++)
             {
                 var step = Formula[i];
-                var scaleNoteIndex = (_rootIndex + step.GetValueFromStepLetter()) % MainNoteMap.Count;
-                _rootIndex = scaleNoteIndex;
-            
-                ScaleNotes.Add(MainNoteMap[scaleNoteIndex]);
+                var scaleNoteIndex = (rootIndex + step.GetValueFromStepLetter()) % MainNoteMap.MainNoteMap.Count;
+                rootIndex = scaleNoteIndex;
+                var noteToAdd = MainNoteMap.MainNoteMap[scaleNoteIndex];
+                noteToAdd.ScalePosition = (startPositionForLoop);
+                ScaleNotes.Add(noteToAdd);
+                startPositionForLoop++;
             }
-
             PrintScale();
         }
+        private void GenerateScaleForEachScaleNote()
+        {
+            foreach (var scaleNote in ScaleNotes)
+            {
+                scaleNote.ScaleNotes = new List<Note>();
+                var rootNote = MainNoteMap.MainNoteMap.FirstOrDefault(_ => _.LetterName.Contains(scaleNote.LetterName.FirstOrDefault()));
+                if (rootNote == null) throw new Exception("Root Note Not Found");
+                var rootIndex = rootNote.PositionIndex - 1;
+                if (rootIndex == -1) throw new Exception("Invalid Root Note");
+                var rootNoteToAdd = new Note(MainNoteMap.MainNoteMap[rootIndex]) {ScalePosition = 1};
+                scaleNote.ScaleNotes.Add(rootNoteToAdd);
+                var startPositionForLoop = 2;
 
+                for (var i = 0; i < Formula.Count; i++)
+                {
+                    var step = Formula[i];
+                    var scaleNoteIndex = (rootIndex + step.GetValueFromStepLetter()) % MainNoteMap.MainNoteMap.Count;
+                    rootIndex = scaleNoteIndex;
+                    var noteToAdd = MainNoteMap.MainNoteMap[scaleNoteIndex];
+                    noteToAdd.ScalePosition = (startPositionForLoop);
+                    scaleNote.ScaleNotes.Add(noteToAdd);
+                    startPositionForLoop++;
+                }
+            }
+        }
+
+        private void GenerateScaleForEachString(Tuning selectedTuning)
+        {
+            foreach (var guitarString in selectedTuning.GuitarTuning)
+            {
+                var stringScale = new List<Note>();
+                var rootNote = MainNoteMap.MainNoteMap.FirstOrDefault(_ => _.LetterName.Contains(guitarString.RootNote));
+                if (rootNote == null) throw new Exception("Root Note Not Found");
+                var rootIndex = rootNote.PositionIndex - 1;
+                if (rootIndex == -1) throw new Exception("Invalid Root Note");
+                var rootNoteToAdd = new Note(MainNoteMap.MainNoteMap[rootIndex]) { ScalePosition = 1 };
+                stringScale.Add(rootNoteToAdd);
+                var startPositionForLoop = 2;
+
+                for (var i = 0; i < Formula.Count; i++) //fretboard gotta repeat
+                {
+                    var step = Formula[i];
+                    var scaleNoteIndex = (rootIndex + step.GetValueFromStepLetter()) % MainNoteMap.MainNoteMap.Count;
+                    rootIndex = scaleNoteIndex;
+                    var noteToAdd = MainNoteMap.MainNoteMap[scaleNoteIndex];
+                    noteToAdd.ScalePosition = (startPositionForLoop);
+                    stringScale.Add(noteToAdd);
+                    startPositionForLoop++;
+                }
+            }
+        }
         public void PrintScale()
         {
             Console.WriteLine($"######### {ScaleName}  ##########");
 
             foreach (var note in ScaleNotes)
             {
-                Console.Write(note.PositionIndex + " ");
+                Console.Write(note.ScalePosition + " ");
                 foreach (var letterName in note.LetterName)
                 {
                     Console.Write(letterName + " ");
@@ -96,12 +311,11 @@ namespace MusicTheory
 
             }
         }
-
         public void PrintMainMap()
         {
             var p = 1;
             Console.WriteLine("######################################");
-            foreach (var note in MainNoteMap)
+            foreach (var note in MainNoteMap.MainNoteMap)
             {
                 Console.Write(p + " ");
                 foreach (var letterName in note.LetterName)
@@ -113,97 +327,6 @@ namespace MusicTheory
                 Console.WriteLine();
 
             }
-        }
-
-        public void GenerateMainNoteMap()
-        {
-
-            MainNoteMap.Add(new Note()
-            {
-                LetterName = new List<string> { "A" },
-                PositionIndex = 1
-
-            });
-
-            MainNoteMap.Add(new Note()
-            {
-                LetterName = new List<string> { "A#", "Bb" },
-                PositionIndex = 2
-            });
-
-            MainNoteMap.Add(new Note()
-            {
-                LetterName = new List<string> { "B" },
-                PositionIndex = 3
-            });
-
-            MainNoteMap.Add(new Note()
-            {
-                LetterName = new List<string> { "C" },
-                PositionIndex = 4
-            });
-
-            MainNoteMap.Add(new Note()
-            {
-
-                LetterName = new List<string> { "C#", "Db" },
-                PositionIndex = 5
-            });
-
-            MainNoteMap.Add(new Note()
-            {
-
-                LetterName = new List<string> { "D" },
-                PositionIndex = 6
-            });
-
-            MainNoteMap.Add(new Note()
-            {
-
-                LetterName = new List<string> { "D#", "Eb" },
-                PositionIndex = 7
-
-            });
-
-            MainNoteMap.Add(new Note()
-            {
-
-                LetterName = new List<string> { "E" },
-                PositionIndex = 8
-            });
-
-
-            MainNoteMap.Add(new Note()
-            {
-
-                LetterName = new List<string> { "F" },
-                PositionIndex = 9
-
-            });
-
-            MainNoteMap.Add(new Note()
-            {
-
-                LetterName = new List<string> { "F#", "Gb" },
-                PositionIndex = 10
-
-            });
-
-            MainNoteMap.Add(new Note()
-            {
-
-                LetterName = new List<string> { "G" },
-                PositionIndex = 11
-
-            });
-
-            MainNoteMap.Add(new Note()
-            {
-
-                LetterName = new List<string> { "G#", "Ab" },
-                PositionIndex = 12
-
-            });
         }
     }
 }
